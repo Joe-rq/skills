@@ -10,6 +10,7 @@
 | **product-opportunity-research** | 多智能体产品机会深度研究：6 Agent 独立分析→交叉质询→总控裁决，产出机会地图+路线图+商业打包策略 | 中文 | ✅ 6 专业 Agent 并行<br>✅ 11 维量化评分<br>✅ 三圈交集优先级<br>✅ 0-36 月产品路线图 |
 | **git-collaboration** | Git 协作工作流专家技能，覆盖 Fork + Feature Branch + Pull Request 模式 | 中文 | ✅ Fork + Feature Branch + PR 标准流程<br>✅ 7 步标准工作流 + 提交规范<br>✅ 7 个常见问题速查<br>✅ 分支管理 + 协作最佳实践 |
 | **mermaid-ascii-renderer** | beautiful-mermaid ASCII/Unicode 渲染系统完整指南 | 中文 | ✅ 支持 5 种图表类型<br>✅ 详细的 API 文档<br>✅ 故障排查决策树<br>✅ 扩展开发指南 |
+| **ppt-methodology-coach** | PPT 内容优先方法论：先内容后设计的六阶段引导式工作流 | 中文 | ✅ 六阶段递进（定目的→文字稿→定风格→素材→输出）<br>✅ 理解型/说服型二分 + 结构风格对照<br>✅ 每阶段退出标准与用户确认门禁<br>✅ 附三审检查清单 |
 
 ## 快速开始
 
@@ -25,6 +26,7 @@ npx skills add joe/skills --skill '*'
 npx skills add joe/skills --skill product-opportunity-research
 npx skills add joe/skills --skill adaptive-team-research
 npx skills add joe/skills --skill mermaid-ascii-renderer
+npx skills add joe/skills --skill ppt-methodology-coach
 ```
 
 **方式二：42plugin 安装**
@@ -53,6 +55,7 @@ xcopy <skill-name> %USERPROFILE%\.claude\skills\ /E /I
 - 测试 `adaptive-team-research`: "帮我多角度分析一下这个设计方案"
 - 测试 `product-opportunity-research`: "帮我做一个深度研究，主题是智能家居安全产品的市场机会"
 - 测试 `git-collaboration`: "帮我创建一个功能分支并提交代码"
+- 测试 `ppt-methodology-coach`: "帮我做一个关于 AI 编程助手的内部培训 PPT"
 
 ## 项目结构
 
@@ -96,6 +99,7 @@ skills/
 
 | 日期 | Skill | 更新内容 |
 |------|-------|---------|
+| 2026-09-29 | ppt-methodology-coach | v1.0.0 新增：先内容后设计的六阶段 PPT 引导工作流 |
 | 2026-07-07 | git-collaboration | v1.0.0 新增：Fork + Feature Branch + Pull Request 协作工作流技能 |
 | 2026-03-18 | 全局 | 仓库重命名：my-claude-skills → skills，支持 `npx skills add joe/skills` 安装 |
 | 2026-03-13 | adaptive-team-research | v1.3.1 评测驱动优化：canvas 创建强制约束、行动计划负责角色必填、用户确认强制门禁 |
@@ -139,4 +143,4 @@ MIT
 
 **维护者**: Joe  
 **创建时间**: 2024-12  
-**最后更新**: 2026-07-07
+**最后更新**: 2026-09-29
