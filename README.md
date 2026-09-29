@@ -26,6 +26,7 @@ npx skills add joe/skills --skill '*'
 npx skills add joe/skills --skill product-opportunity-research
 npx skills add joe/skills --skill adaptive-team-research
 npx skills add joe/skills --skill mermaid-ascii-renderer
+npx skills add joe/skills --skill git-collaboration
 npx skills add joe/skills --skill ppt-methodology-coach
 ```
 
