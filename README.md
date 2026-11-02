@@ -11,6 +11,7 @@
 | **git-collaboration** | Git 协作工作流专家技能，覆盖 Fork + Feature Branch + Pull Request 模式 | 中文 | ✅ Fork + Feature Branch + PR 标准流程<br>✅ 7 步标准工作流 + 提交规范<br>✅ 7 个常见问题速查<br>✅ 分支管理 + 协作最佳实践 |
 | **mermaid-ascii-renderer** | beautiful-mermaid ASCII/Unicode 渲染系统完整指南 | 中文 | ✅ 支持 5 种图表类型<br>✅ 详细的 API 文档<br>✅ 故障排查决策树<br>✅ 扩展开发指南 |
 | **ppt-methodology-coach** | PPT 内容优先方法论：先内容后设计的六阶段引导式工作流 | 中文 | ✅ 六阶段递进（定目的→文字稿→定风格→素材→输出）<br>✅ 理解型/说服型二分 + 结构风格对照<br>✅ 每阶段退出标准与用户确认门禁<br>✅ 附三审检查清单 |
+| **tmux-claude-coord** | 多 Claude Code 会话协调：一键建 tmux 工作区与 coord 大总管，配套派活、交接、看板与重资源互斥规约 | 中文 | ✅ 初始化后做真实 ready 握手，不只建窗口<br>✅ coord 只协调不代写，worker 独立 worktree<br>✅ 全机重活锁 + 待定清单 + Top4+Top3 看板<br>✅ 失败保留现场，不冒认成功 |
 
 ## 快速开始
 
@@ -28,6 +29,7 @@ npx skills add joe/skills --skill adaptive-team-research
 npx skills add joe/skills --skill mermaid-ascii-renderer
 npx skills add joe/skills --skill git-collaboration
 npx skills add joe/skills --skill ppt-methodology-coach
+npx skills add joe/skills --skill tmux-claude-coord
 ```
 
 **方式二：42plugin 安装**
@@ -57,6 +59,7 @@ xcopy <skill-name> %USERPROFILE%\.claude\skills\ /E /I
 - 测试 `product-opportunity-research`: "帮我做一个深度研究，主题是智能家居安全产品的市场机会"
 - 测试 `git-collaboration`: "帮我创建一个功能分支并提交代码"
 - 测试 `ppt-methodology-coach`: "帮我做一个关于 AI 编程助手的内部培训 PPT"
+- 测试 `tmux-claude-coord`: "帮我在这个项目建一个大总管，协调多个 Claude Code 会话"
 
 ## 项目结构
 
@@ -100,6 +103,7 @@ skills/
 
 | 日期 | Skill | 更新内容 |
 |------|-------|---------|
+| 2026-11-02 | tmux-claude-coord | v1.0.0 新增：tmux 工作区 + coord 大总管初始化、ready 握手验证与多会话运行规约 |
 | 2026-09-29 | ppt-methodology-coach | v1.0.0 新增：先内容后设计的六阶段 PPT 引导工作流 |
 | 2026-07-07 | git-collaboration | v1.0.0 新增：Fork + Feature Branch + Pull Request 协作工作流技能 |
 | 2026-03-18 | 全局 | 仓库重命名：my-claude-skills → skills，支持 `npx skills add joe/skills` 安装 |
