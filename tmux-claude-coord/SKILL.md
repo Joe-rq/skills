@@ -9,9 +9,9 @@ disable-model-invocation: true
 user-invocable: true
 metadata:
   author: qrq
-  version: 1.1.0
   title: 大总管工作区
   description_zh: 一键创建 tmux 工作区与 coord 大总管，并落好派活、交接、看板和就绪验证。
+  version: 1.0.1
   license: MIT
 ---
 
