@@ -9,7 +9,7 @@ disable-model-invocation: true
 user-invocable: true
 metadata:
   author: qrq
-  version: 1.0.0
+  version: 1.1.0
   title: 大总管工作区
   description_zh: 一键创建 tmux 工作区与 coord 大总管，并落好派活、交接、看板和就绪验证。
   license: MIT
@@ -72,7 +72,7 @@ bash "$HOME/.claude/skills/tmux-claude-coord/scripts/init.sh" "$PWD" "aiw"
 
 脚本会验证 session、window、cwd、Claude 启动命令与存活状态，以及 ready 标记和状态行。新建 coord 必须完成本次唯一 nonce 握手；复用时只声称既有 ready 标记仍然有效，不冒充当前会话重新握手。只有全部通过才报告「大总管已就位」。
 
-- **超时或失败：**保留现场，报告失败阶段；用 `tmux capture-pane -p -t <工作区>:coord` 看信任、登录或权限提示。不要重复启动第二个 coord，不要自动清理。
+- **超时或失败：**保留现场，报告失败阶段；用 `tmux capture-pane -p -t <工作区>:coord` 看信任、登录或权限提示。不要重复启动第二个 coord，不要自动清理。**运行期同样适用**：coord 长时间无回报时，先 capture-pane 查是否卡在交互弹窗（无人值守窗格里弹窗 = 无人应答的死锁）。
 - **重跑：**已存在且健康的 coord 直接复用；已有交接与看板不覆盖。
 - **交付入口：**成功后只给用户 attach 命令和一句下一步。需要用户亲手运行时，建议输入 `! tmux attach -t <工作区>`，或在终端运行同一命令。
 
@@ -98,11 +98,21 @@ bash "$HOME/.claude/skills/tmux-claude-coord/scripts/spawn.sh" \
 
 worker 同样要完成 ready 握手。`SendMessage` 成功不等于对方已读；关键状态必须同时落在 handoff 或报告中。
 
+## 入口会话怎么等回报
+
+「发出指令后被动等回报」不够——coord 卡死在弹窗里时不会回报，也不会触发 idle（turn 挂起不算空闲）。等回报期间：
+
+1. 向 coord 挂一次性 idle 订阅（`SendMessage` 带 `notify_when_idle: true`），收到通知做一次核查，需要继续等就再挂一次。
+2. 核查动作各做一次、不轮询：`ListAgents` 看 coord 状态 + `tmux capture-pane -p -t <工作区>:coord` 看是否卡弹窗。
+3. 速查判据：`waiting` ≈ 弹窗在等键盘；`idle` 但 handoff 无更新 ≈ 消息未消化或异常退出。
+
+这是死锁探测，不是巡检——本技能不装定时器，探测由入口会话在等待期间顺手做。
+
 ## 硬边界
 
 - **coord 不亲自实现、修 bug 或代 worker 修复评审意见。**它只拆解、派活、独立验收、协调评审与记录。
 - 默认最多两个活跃 worker；有依赖或写入交集就串行，并行写代码必须隔离 worktree。
-- 不自动巡检，不自动 PR 合并、push、部署或对外发消息；授权只作用于用户明确批准的那一次。
+- 不装定时器或守护进程做自动巡检（入口会话等回报时的 idle 订阅与核查见上节）；不自动 PR 合并、push、部署或对外发消息；授权只作用于用户明确批准的那一次。
 - 不用 `--dangerously-skip-permissions`，不替用户接受信任弹窗。
 - 失败保留现场；清理既有 session、window、worktree 或状态文件必须另行获得用户同意。
 - 本技能不管事件过滤、Thread 订阅、Watchdog、云端持久化；需要这些时应另做系统，而不是往初始化脚本里塞。
