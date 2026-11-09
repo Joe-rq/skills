@@ -103,6 +103,7 @@ skills/
 
 | 日期 | Skill | 更新内容 |
 |------|-------|---------|
+| 2026-11-09 | tmux-claude-coord | v1.0.2：upgrade/succeed 升级与接班通道、coord.local 私有条款、spawn --timeout/--recheck、tmux 精确匹配与 & 渲染修复；37 项夹具断言双 bash 通过 |
 | 2026-11-05 | tmux-claude-coord | v1.0.1：无人值守纪律（coord/worker 禁交互弹窗）+ 入口会话 idle 订阅与死锁探测（三次弹窗卡死实证后立规） |
 | 2026-11-02 | tmux-claude-coord | v1.0.0 新增：tmux 工作区 + coord 大总管初始化、ready 握手验证与多会话运行规约 |
 | 2026-09-29 | ppt-methodology-coach | v1.0.0 新增：先内容后设计的六阶段 PPT 引导工作流 |
