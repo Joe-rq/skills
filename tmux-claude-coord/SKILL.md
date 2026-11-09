@@ -70,13 +70,13 @@ bash "$HOME/.claude/skills/tmux-claude-coord/scripts/init.sh" "$PWD" "aiw"
 
 ### 3. 验证，不替它宣布成功
 
-脚本会验证 session、window、cwd、Claude 启动命令与存活状态，以及 ready 标记和状态行。新建 coord 必须完成本次唯一 nonce 握手；复用时只声称既有 ready 标记仍然有效，不冒充当前会话重新握手。只有全部通过才报告「大总管已就位」。
+脚本会验证 session、window、cwd、Claude 启动命令与存活状态，以及 ready 标记和状态行。新建 coord 必须完成本次唯一 nonce 握手；复用时只核对窗口存活、`exec claude`、cwd 与 workspace.md 身份，handoff 状态仅作参考（`waiting`、自定义 nonce 不再误判为不可复用），不冒充当前会话重新握手。只有全部通过才报告「大总管已就位」。所有 tmux 目标用 `=` 精确匹配，窗口操作使用创建时返回的窗口 ID，避免同名前缀误伤。
 
 - **超时或失败：**保留现场，报告失败阶段；用 `tmux capture-pane -p -t <工作区>:coord` 看信任、登录或权限提示。不要重复启动第二个 coord，不要自动清理。**运行期同样适用**：coord 长时间无回报时，先 capture-pane 查是否卡在交互弹窗（无人值守窗格里弹窗 = 无人应答的死锁）。
-- **重跑：**已存在且健康的 coord 直接复用；已有交接与看板不覆盖。
+- **重跑：**已存在且健康的 coord 直接复用；已有交接与看板不覆盖。新建与接班握手默认等 90 秒，`init.sh --timeout <秒>` 可调整。
 - **交付入口：**成功后只给用户 attach 命令和一句下一步。需要用户亲手运行时，建议输入 `! tmux attach -t <工作区>`，或在终端运行同一命令。
 
-**验证边界：**当前已通过 Bash 语法检查和隔离 tmux 假进程测试；真实 Claude 的启动/握手、实际 worktree 创建及原生跨会话传话仍待首次正式调用做端到端验收，不把替身测试当成这些能力已验证。
+**验证边界：**`tests/run.sh` 用私有 tmux socket + 假 claude 跑 7 组隔离用例（37 项断言），已在 bash 5.2 与 3.2 通过，并对三个真实项目的 `.aiw` 副本做过 upgrade 兼容 diff；真实 Claude 的启动/握手、实际 worktree 创建及原生跨会话传话仍待首次正式调用做端到端验收，不把替身测试当成这些能力已验证。
 
 第一句工作指令可以是：
 
@@ -97,6 +97,34 @@ bash "$HOME/.claude/skills/tmux-claude-coord/scripts/spawn.sh" \
 并行写代码时加 `--worktree`；用户明确给定执行模型时才加 `--model "<已确认模型>"`。不得自行替换模型或评审链。
 
 worker 同样要完成 ready 握手。`SendMessage` 成功不等于对方已读；关键状态必须同时落在 handoff 或报告中。
+
+握手默认等 90 秒（`--timeout <秒>` 调整）。超时后**不要重复 spawn**：窗口与 handoff 已保留，用同一命令加 `--recheck` 补验；它不新建窗口、不覆盖 handoff，接受已写回的握手标记（状态可以已离开 `working`）。
+
+## 升级既有工作区
+
+技能模板更新后，把项目的 `.aiw` 合同升级而不冲掉本地改写：
+
+```bash
+# 默认只显示 diff，不写任何文件
+bash "$HOME/.claude/skills/tmux-claude-coord/scripts/upgrade.sh" --project "/absolute/path/to/project"
+# 确认后应用
+bash "$HOME/.claude/skills/tmux-claude-coord/scripts/upgrade.sh" --project "/absolute/path/to/project" --apply
+```
+
+- `worker.md`：diff 只含新增行时直接更新（旧文件备份 `worker.md.bak`）；含删除/改写则落到 `worker.md.new` 等人工合并。
+- `coord.md`：永不覆盖，更新落到 `coord.md.new`，下一次 `succeed.sh` 接班握手成功后生效，旧合同备份为 `coord.md.gen<N>.prev`。
+- `coord.local.md` / `worker.local.md`：项目私有条款，启动时附加在合同之后，升级永不触碰。coord.md 里的本地改写不会自动合并进新模板，请迁到 `coord.local.md`。
+
+## coord 换班（succeed）
+
+上下文过重或合同待更新时，在 handoff 写好「下一步」后运行：
+
+```bash
+bash "$HOME/.claude/skills/tmux-claude-coord/scripts/succeed.sh" \
+  --project "/absolute/path/to/project" --session "aiw" [--model "<已确认模型>"]
+```
+
+新 coord 默认命名 `coord2`、`coord3`…（`--window` / `--name` 可覆盖），从 handoff 的「下一步」继续；旧窗口保留、不 kill、不改名。握手成功后才更新 `workspace.md` 的 coord 窗口/会话名/代数；之后 `spawn.sh` 与 `init.sh` 都按该指针找当前 coord，不再要求窗口叫 `coord`。
 
 ## 入口会话怎么等回报
 

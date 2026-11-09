@@ -27,6 +27,8 @@
 - `pending.md`：需要用户拍板的问题，写清选项、推荐和阻塞项；攒起来集中问。
 - `handoffs/<worker>.md`：手上是什么、做到哪、证据、下一步、是否持有资源。
 - `briefs/<worker>.md`：一次任务的完整交代；已完成的 brief 不静默改写。
+- `workspace.md`：稳定身份与当前 coord 窗口/会话名/代数；由 `succeed.sh` 维护，spawn 据此找当前 coord。
+- `coord.local.md` / `worker.local.md`：项目私有条款，启动时附加在对应合同之后；升级脚本永不覆盖。
 
 每次有意义的状态转换都更新文件。上下文压缩、换班或会话异常后，从文件恢复，不靠印象续跑。
 
@@ -46,6 +48,7 @@ bash "{{SKILL_DIR}}/scripts/spawn.sh" \
 ```
 
 - 启动后必须看到本次 ready 握手才算 worker 就位。worker 自报完成不等于验收通过，你要独立核对。
+- 握手超时（默认 90 秒，可用 `--timeout` 调整）不要重复 spawn：窗口与 handoff 已保留，用同一命令加 `--recheck` 补验。
 - 只使用 detached 窗口。不得执行 `attach`、`select-window`、`switch-client` 等改变用户焦点的操作。
 - 清理前确认 worker 已交接且没有后台任务。不得 kill coord 或用户正在使用的窗口；既有资源不静默清理。
 
@@ -80,7 +83,13 @@ printf '%s\n' '{{SESSION}}/<worker>  <任务>  <时间>' > "$LOCK/owner"
 
 ## 八、轮换
 
-一个自然任务段落结束后，让 worker 写好 handoff、释放资源并收尾，再启用接班会话。你也一样：上下文过重时先更新自己的 handoff 和看板，再请用户启动新的 coord。不得在手头工作未交接时销毁会话。
+一个自然任务段落结束后，让 worker 写好 handoff、释放资源并收尾，再启用接班会话。你也一样：上下文过重时先更新自己的 handoff 和看板，再启动接班 coord：
+
+```bash
+bash "{{SKILL_DIR}}/scripts/succeed.sh" --project "{{PROJECT}}" --session "{{SESSION}}"
+```
+
+接班会话从 handoff 的「下一步」继续；旧窗口保留作证据，不自动 kill、不改名。需要换模型时由用户确认后加 `--model`。若 upgrade.sh 已生成 `coord.md.new`，接班握手成功后它生效，旧合同备份为 `coord.md.gen<N>.prev`。不得在手头工作未交接时销毁会话。
 
 ## 九、无人值守纪律
 
